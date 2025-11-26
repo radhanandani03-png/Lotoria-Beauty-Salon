@@ -14,7 +14,7 @@ export const subscribeToData = (onUpdate: () => void) => {
     unsubscribers.push(onSnapshot(collection(db, col), (snap) => {
       const data: any[] = [];
       snap.forEach(d => data.push(d.data()));
-      if(col === 'config' && data.length > 0) cache.config = data[0]; // Config is single doc
+      if(col === 'config' && data.length > 0) cache.config = data[0];
       else cache[col] = data;
       onUpdate();
     }));
@@ -27,7 +27,7 @@ const checkAndUploadDefaults = async () => {
   try {
     const snap = await getDocs(collection(db, 'config'));
     if (snap.empty) {
-        console.log("Uploading defaults...");
+        console.log("Database empty. Uploading defaults...");
         const batch = writeBatch(db);
         batch.set(doc(db, 'config', 'main'), INITIAL_CONFIG);
         INITIAL_SERVICES.forEach(s => batch.set(doc(db, 'services', s.id), s));
@@ -39,7 +39,7 @@ const checkAndUploadDefaults = async () => {
         await batch.commit();
     }
   } catch (e) {
-      console.error("Firebase connection error. Check API keys.", e);
+      console.error("Firebase Key Missing or Wrong.", e);
   }
 };
 
